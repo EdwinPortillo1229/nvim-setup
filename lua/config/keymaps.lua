@@ -9,6 +9,30 @@ local function map(mode, lhs, rhs, opts)
   vim.api.nvim_set_keymap(mode, lhs, rhs, options)
 end
 
+local function unmap(mode, lhs)
+  pcall(vim.api.nvim_del_keymap, mode, lhs)
+end
+
+-- Unmapping the current mappings if they exist
+unmap("n", "<leader>ff")
+unmap("n", "<leader>fF")
+
+-- Helper function to find files in root directory
+_G.find_files_in_root = function()
+  require("telescope.builtin").find_files({ cwd = vim.fn.getcwd() })
+end
+
+-- Helper function to find files in current working directory
+_G.find_files_in_cwd = function()
+  require("telescope.builtin").find_files()
+end
+
+-- Map leader+ff to find files in root directory
+map("n", "<leader>ff", "<cmd>lua find_files_in_root()<CR>", { desc = "Find Files from Root Directory" })
+
+-- Map leader+fF to find files in current working directory
+map("n", "<leader>fF", "<cmd>lua find_files_in_cwd()<CR>", { desc = "Find Files from Working Directory" })
+
 -- Fix quiting nvim better
 map("n", "<leader>c", "<cmd>:bd<cr>", { desc = "Close Current Buffer" })
 
